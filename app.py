@@ -80,6 +80,7 @@ def gen():
         # cv2.imshow("countours", image)
         frame = cv2.imencode('.jpg', image)[1].tobytes()
         print("No of objects detected : ", len(count))
+        
         key = cv2.waitKey(1) & 0xFF
         count = []
         yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -87,7 +88,6 @@ def gen():
         key = cv2.waitKey(20)
         if key == 27:
             break
-
 
 @app.route('/video_feed')
 def video_feed():
