@@ -7,10 +7,6 @@ import numpy as np
 import argparse
 import imutils
 
-count = []
-
-
-
 app = Flask(__name__)
 sub = cv2.createBackgroundSubtractorMOG2()  # create background subtractor
 
