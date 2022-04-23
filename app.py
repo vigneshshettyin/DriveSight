@@ -1,24 +1,20 @@
-# import the necessary packages
+import time
+import cv2
+from flask import Flask, render_template, Response
 from imutils.video import VideoStream
 from imutils.video import FPS
 import numpy as np
 import argparse
 import imutils
-import time
-import cv2
-count = []
-# construct the argument parse and parse the arguments
-# '''ap = argparse.ArgumentParser()
-# ap.add_argument("-p", "--prototxt", required=True,
-# 	help="path to Caffe 'deploy' prototxt file")
-# ap.add_argument("-m", "--model", required=True,
-# 	help="path to Caffe pre-trained model")
-# ap.add_argument("-c", "--confidence", type=float, default=0.2,
-# 	help="minimum probability to filter weak detections")
-# args = vars(ap.parse_args())'''
 
-# initialize the list of class labels MobileNet SSD was trained to
-# detect, then generate a set of bounding box colors for each class
+count = []
+
+
+
+app = Flask(__name__)
+sub = cv2.createBackgroundSubtractorMOG2()  # create background subtractor
+
+
 CLASSES = [ "background", "aeroplane", "bicycle", "bird", "boat",
 	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
 	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
@@ -29,78 +25,80 @@ print("[INFO] loading model...")
 net = cv2.dnn.readNetFromCaffe(
     'MobileNetSSD_deploy.prototxt.txt', 'MobileNetSSD_deploy.caffemodel')
 
-# initialize the video stream, allow the cammera sensor to warmup,
-# and initialize the FPS counter
-print("[INFO] starting video stream...")
-vs = VideoStream(src=0).start()
-time.sleep(2.0)
-fps = FPS().start()
+@app.route('/')
+def hello_world():  # put application's code here
+    return 'Hello World!'
 
-# loop over the frames from the video stream
-while True:
-    # grab the frame from the threaded video stream and resize it
-    # to have a maximum width of 400 pixels
-    frame = vs.read()
-    frame = imutils.resize(frame, width=1080)
 
-    # grab the frame dimensions and convert it to a blob
-    (h, w) = frame.shape[:2]
-    blob = cv2.dnn.blobFromImage(cv2.resize(frame, (600, 600)),
-                                 0.007843, (300, 300), 127.5)
+def gen():
+    count = []
+    vs = VideoStream(src=0).start()
+    time.sleep(2.0)
+    fps = FPS().start()
 
-    # pass the blob through the network and obtain the detections and
-    # predictions
-    net.setInput(blob)
-    detections = net.forward()
+    # loop over the frames from the video stream
+    while True:
+        # grab the frame from the threaded video stream and resize it
+        # to have a maximum width of 400 pixels
+        image = vs.read()
+        image = imutils.resize(image, width=1080)
 
-    # loop over the detections
-    for i in np.arange(0, detections.shape[2]):
-        # extract the confidence (i.e., probability) associated with
-        # the prediction
-        confidence = detections[0, 0, i, 2]
+        # grab the frame dimensions and convert it to a blob
+        (h, w) = image.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(image, (600, 600)),
+                                     0.007843, (300, 300), 127.5)
 
-        # filter out weak detections by ensuring the `confidence` is
-        # greater than the minimum confidence
-        if confidence > 0.2:
-            
-            # extract the index of the class label from the
-            # `detections`, then compute the (x, y)-coordinates of
-            # the bounding box for the object
-            idx = int(detections[0, 0, i, 1])
-            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-            (startX, startY, endX, endY) = box.astype("int")
+        # pass the blob through the network and obtain the detections and
+        # predictions
+        net.setInput(blob)
+        detections = net.forward()
 
-            # draw the prediction on the frame
-            label = "{}: {:.2f}%".format(CLASSES[idx],
-                                         confidence * 100)
-            cv2.rectangle(frame, (startX, startY), (endX, endY),
-                          COLORS[idx], 2)
-            y = startY - 15 if startY - 15 > 15 else startY + 15
-            cv2.putText(frame, label, (startX, y),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
-            temp = label.split(" ")
-            count.append(temp)# elif temp[0] in count:
-            #     print("No objects on screen")
-    # show the output frame
-            
-    cv2.imshow("Nighttime Driver Assistance", frame)
-    
-    print("No of objects detected : ", len(count))
-    key = cv2.waitKey(1) & 0xFF
-    count =[]
-    # if the `q` key was pressed, break from the loop
-    if key == ord("q"):
-        break
-    # print(count)
-    # count.clear()
-    # update the FPS counter
-    fps.update()
+        # loop over the detections
+        for i in np.arange(0, detections.shape[2]):
+            # extract the confidence (i.e., probability) associated with
+            # the prediction
+            confidence = detections[0, 0, i, 2]
 
-# stop the timer and display FPS information
-fps.stop()
-print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
-print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+            # filter out weak detections by ensuring the `confidence` is
+            # greater than the minimum confidence
+            if confidence > 0.2:
+                # extract the index of the class label from the
+                # `detections`, then compute the (x, y)-coordinates of
+                # the bounding box for the object
+                idx = int(detections[0, 0, i, 1])
+                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
 
-# do a bit of cleanup
-cv2.destroyAllWindows()
-vs.stop()
+                # draw the prediction on the frame
+                label = "{}: {:.2f}%".format(CLASSES[idx],
+                                             confidence * 100)
+                cv2.rectangle(image, (startX, startY), (endX, endY),
+                              COLORS[idx], 2)
+                y = startY - 15 if startY - 15 > 15 else startY + 15
+                cv2.putText(image, label, (startX, y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
+                temp = label.split(" ")
+                count.append(temp)  # elif temp[0] in count:
+                #     print("No objects on screen")
+        # show the output frame
+        # cv2.imshow("countours", image)
+        frame = cv2.imencode('.jpg', image)[1].tobytes()
+        print("No of objects detected : ", len(count))
+        key = cv2.waitKey(1) & 0xFF
+        count = []
+        yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        # time.sleep(0.1)
+        key = cv2.waitKey(20)
+        if key == 27:
+            break
+
+
+@app.route('/video_feed')
+def video_feed():
+    """Video streaming route. Put this in the src attribute of an img tag."""
+    return Response(gen(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+if __name__ == '__main__':
+    app.run()
