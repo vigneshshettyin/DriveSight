@@ -1,10 +1,7 @@
-import time
 import cv2
-from flask import Flask, render_template, Response
+from flask import Flask, Response, jsonify
 from imutils.video import VideoStream
-from imutils.video import FPS
 import numpy as np
-import argparse
 import imutils
 
 app = Flask(__name__)
@@ -23,14 +20,18 @@ net = cv2.dnn.readNetFromCaffe(
 
 @app.route('/')
 def hello_world():  # put application's code here
-    return 'Hello World!'
+    response = {
+        "Info" : "Night Time Object Detection API",
+        "Devs" : ["Shanwill Pinto", "Simonne Pinto", "Sriganesh Rao", "Vignesh"],
+        "OS" : "Ubuntu Server 20.04 LTS",
+        "System" : "Raspberry Pi 4 Model B"
+    }
+    return jsonify(response), 200
 
 
 def gen():
     count = []
     vs = VideoStream(src=0).start()
-    time.sleep(2.0)
-    fps = FPS().start()
 
     # loop over the frames from the video stream
     while True:
@@ -74,12 +75,12 @@ def gen():
                 cv2.putText(image, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
                 temp = label.split(" ")
-                count.append(temp)  # elif temp[0] in count:
-                #     print("No objects on screen")
-        # show the output frame
-        # cv2.imshow("countours", image)
+                count.append(temp)
         frame = cv2.imencode('.jpg', image)[1].tobytes()
-        print("No of objects detected : ", len(count))
+        print("Objects Detected : ", {
+            "count" : len(count),
+            "items" : count
+        })
         
         key = cv2.waitKey(1) & 0xFF
         count = []
@@ -89,7 +90,7 @@ def gen():
         if key == 27:
             break
 
-@app.route('/video_feed')
+@app.route('/live')
 def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(),
