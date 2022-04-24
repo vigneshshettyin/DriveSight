@@ -22,7 +22,7 @@ net = cv2.dnn.readNetFromCaffe(
 def hello_world():  # put application's code here
     response = {
         "Info" : "Night Time Object Detection API",
-        "Devs" : ["Shanwill Pinto", "Simonne Pinto", "Sriganesh Rao", "Vignesh"],
+        "Devs" : ["Shanwill Pinto", "Simonne Pinto", "Sriganesh", "Vignesh"],
         "OS" : "Ubuntu Server 20.04 LTS",
         "System" : "Raspberry Pi 4 Model B"
     }
