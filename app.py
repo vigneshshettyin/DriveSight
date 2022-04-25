@@ -81,8 +81,6 @@ def gen():
             "count" : len(count),
             "items" : count
         })
-        
-        key = cv2.waitKey(1) & 0xFF
         count = []
         yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         # time.sleep(0.1)
