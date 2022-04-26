@@ -6,7 +6,9 @@ const User = require("../db/schema/User");
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    console.log(JSON.parse(JSON.stringify(req.body)));
+    const { email, password , name} =JSON.parse(JSON.stringify(req.body)); 
+    console.log(name);
     if (!name || !email || !password) {
       return res.status(422).send({
         error: "Please provide all the details",
