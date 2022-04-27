@@ -15,22 +15,15 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { AUTH } from "./Auth";
-const SERVER_URL= 'http://127.0.0.1:5000'
-
+const SERVER_URL = "http://127.0.0.1:5001";
 
 // Make a request for a user with a given ID
-
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <a
-        color="inherit"
-        rel="noreferrer"
-        target="_blank"
-        href="#"
-      >
+      <a color="inherit" rel="noreferrer" target="_blank" href="#">
         DriveSight
       </a>{" "}
       {new Date().getFullYear()}
@@ -114,12 +107,16 @@ export default function SignUp() {
     formdata.append("email", email);
     formdata.append("password", password);
     formdata.append("name", firstName);
-    
+
     registerUser(formdata);
   };
 
   return (
-    <Container style={{backgroundColor:"#ffffffaa",borderRadius:"15px"}} component="main" maxWidth="xs">
+    <Container
+      style={{ backgroundColor: "#ffffffaa", borderRadius: "15px" }}
+      component="main"
+      maxWidth="xs"
+    >
       {CheckForRegister()}
       <CssBaseline />
       <div className={classes.paper}>
@@ -145,7 +142,7 @@ export default function SignUp() {
                 autoFocus
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -173,7 +170,6 @@ export default function SignUp() {
                 autoComplete="current-password"
               />
             </Grid>
-            
           </Grid>
           <Button
             type="submit"
