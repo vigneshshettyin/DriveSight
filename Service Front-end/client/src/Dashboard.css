@@ -60,10 +60,39 @@ a :hover{
   border: 5px solid white;
   border-radius: 20px;
   color: #000;
-  background-color: white;
+  background-color: whitesmoke;
   font-size: 30px;
   font-weight: bold;
   text-align: center;
+  overflow-y: scroll;
+  
+
+}
+#status::-webkit-scrollbar {
+  display: none;
+}
+#rowStatus{
+  border-radius: 15px ;
+  margin: 10px;
+  
+  
+}
+#status-container{
+ 
+  font-size: 1rem;
+  width: 20vw;
+  font-weight: 500;
+  
+
+}
+h3{
+  font-weight: 600;
+}
+.code_200{
+  background-color: #b9fbc0;
+}
+.code_500{
+ background-color: #ffb3c1;
 }
 
 #nav{

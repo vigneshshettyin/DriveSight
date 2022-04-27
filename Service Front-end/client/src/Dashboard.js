@@ -1,22 +1,40 @@
 
-import './App.css';
+import './Dashboard.css';
 
 import { AUTH } from "./auth/Auth";
-import   {useNavigate,
-  Link } from "react-router-dom";
-import { useEffect } from 'react';
+import   {useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+const axios = require('axios').default;
+const SERVER_URL= 'http://127.0.0.1:5000'
+
 
 
 function Dashboard() {
+  const [statusArr,setStatusArr]=useState([])
+  const [isLoading, setLoading] = useState(true);
   const navigate = useNavigate();
-  useEffect(() => {
-    
+  useEffect(() => {  
     if (!AUTH()) {
+      navigate("/login");   }  
+  })
+  useEffect(()=>{
+    axios.get(`${SERVER_URL}/api/status`)
+  .then(function (response) {
+    
+    
+    setStatusArr(response.data)
+    setLoading(false);
+  
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
 
-      navigate("/login");
-    }
-   
-  }, [])
+  },[])
   const logout=(e)=>{
     e.preventDefault();
     localStorage.removeItem("token")
@@ -24,9 +42,11 @@ function Dashboard() {
 
 
   }
-
+  if (isLoading) {
+    return <div className="App">Loading...</div>;
+  }
   
-  console.log(localStorage.getItem("token"))
+  
   
   return (
     <div className='container-fluid'>
@@ -51,8 +71,10 @@ function Dashboard() {
       <div className="container-fluid py-4" id="container-grid">
         <div className="row">
             <div className="col">
-                <div className="container-fluid shadow" id="status">
-                    <h3>Status: ✅</h3>
+                <div className="container-fluid shadow" id="status">                   
+                   <div className='row' id="status-container">
+                  {statusArr.map(d => (<div className={d.error_code===200?'code_200':'code_500'}  id='rowStatus' key={d._id}><p>{d.data}</p>Status Code -{d.error_code}</div>))} 
+                  </div>
                 </div>
             </div>
             <div className="col">

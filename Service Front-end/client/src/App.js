@@ -1,5 +1,5 @@
 
-import './App.css';
+
 import Login from './auth/login.js'
 import Register from './auth/register.js'
 import Dashboard from './Dashboard';
