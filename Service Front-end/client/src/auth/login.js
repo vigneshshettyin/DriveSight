@@ -109,7 +109,7 @@ export default function SignIn() {
   const classes = useStyles();
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container style={{backgroundColor:"#ffffffaa",borderRadius:"15px"}} component="main" maxWidth="xs">
       {//CheckForLogin()
       }
       <CssBaseline />

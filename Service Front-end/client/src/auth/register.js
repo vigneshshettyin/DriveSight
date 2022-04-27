@@ -17,6 +17,10 @@ import Container from "@material-ui/core/Container";
 import { AUTH } from "./Auth";
 const SERVER_URL= 'http://127.0.0.1:5000'
 
+
+// Make a request for a user with a given ID
+
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -115,7 +119,7 @@ export default function SignUp() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container style={{backgroundColor:"#ffffffaa",borderRadius:"15px"}} component="main" maxWidth="xs">
       {CheckForRegister()}
       <CssBaseline />
       <div className={classes.paper}>
