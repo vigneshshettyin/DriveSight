@@ -4,10 +4,10 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const jwt = require("./service/jwt");
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const corsOptions = {
-  origin: "*",
+  origin: ["http://localhost:3000"],
   optionsSuccessStatus: 200,
 };
 
