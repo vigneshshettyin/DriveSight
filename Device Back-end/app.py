@@ -4,7 +4,8 @@ from imutils.video import VideoStream
 import numpy as np
 import imutils
 import time
-import RPi.GPIO as GPIO
+from datetime import datetime
+# import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 sub = cv2.createBackgroundSubtractorMOG2()  # create background subtractor
@@ -37,16 +38,16 @@ def hello_world():  # put application's code here
 
 def gen():
     count = []
-    # vs = VideoStream(src=2).start()
+    vs = VideoStream(src=0).start()
 
     # Video from file using imutils
-    vs = cv2.VideoCapture(filename='Device Back-end\video.mp4')
+    # vs = cv2.VideoCapture(filename='Device Back-end\video.mp4')
 
     # loop over the frames from the video stream
     while True:
         # grab the frame from the threaded video stream and resize it
         # to have a maximum width of 400 pixels
-        _,image = vs.read()
+        image = vs.read()
         image = imutils.resize(image, width=500)
 
         # grab the frame dimensions and convert it to a blob
